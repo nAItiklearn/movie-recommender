@@ -65,4 +65,29 @@ def convert_crew(obj):
 
 movies['cast'] =movies['cast'].apply(convert_cast)
 movies['crew'] =movies['crew'].apply(convert_crew)
-print(movies.head())
+
+movies['overview'] = movies['overview'].apply(lambda x:x.split()) #labda creates an anonymous function, here it splits the overview into a list of words.
+
+
+
+movies['genres'] =movies['genres'].apply(lambda x:[i.replace(" ", "") for i in x]if x else []) #removes spaces from the genres list
+movies['keywords'] =movies['keywords'].apply(lambda x:[i.replace(" ", "") for i in x]if x else []) #removes spaces from the keywords list
+movies['cast'] =movies['cast'].apply(lambda x:[i.replace(" ", "") for i in x]if x else []) #removes spaces from the cast list
+movies['crew'] =movies['crew'].apply(lambda x:[i.replace(" ", "") for   i in x]if x else []) #removes spaces from the crew list
+# print(movies.head())
+
+
+#CREATING A TAGS COLUMN THAT COMBINES ALL THE USEFUL FEATURES INTO A SINGLE COLUMN
+movies['tags']= movies['overview']+movies['genres']+movies['cast']+movies['crew']+movies['keywords']
+
+#creating a new dataframe with only the useful features
+new_df = movies[['id', 'title_movies', 'tags']].copy()
+
+new_df['tags'] = new_df['tags'].apply(lambda x: " ".join(x)) #join the tags into a single string
+
+#converting the tags to lowercase
+new_df['tags']= new_df['tags'].apply(lambda x: x.lower())
+
+
+#text vectorization - converting text into numbers using bag of words model
+from sklearn.feature_extraction.text import CountVectorizer
