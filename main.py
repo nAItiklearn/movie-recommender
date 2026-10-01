@@ -97,7 +97,7 @@ new_df['tags'] = new_df['tags'].apply(lambda x: " ".join(x)) #join the tags into
 new_df['tags']= new_df['tags'].apply(lambda x: x.lower())
 
 new_df['tags']=  new_df['tags'].apply(stem)
-
+new_df = new_df.reset_index(drop=True)
 #text vectorization - converting text into numbers using bag of words model
 from sklearn.feature_extraction.text import CountVectorizer
 cv = CountVectorizer(stop_words='english', max_features=5000)
@@ -109,7 +109,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 similty=cosine_similarity(vectors)
 
 
-## will find similar movies now 
+## will find similar movies now when a user will search for one
 
 def recommend(movie):
     movie_index = new_df[new_df['title_movies'] ==movie].index[0]
@@ -118,4 +118,8 @@ def recommend(movie):
     for i in movie_list:
         print(new_df.iloc[i[0]].title_movies)
   
-recommend('Batman')
+
+import pickle
+
+# pickle.dump(new_df.to_dict(),open('movieDict.pkl', 'wb'))
+pickle.dump(similty, open("similarity.pkl", 'wb'))
