@@ -4,8 +4,16 @@ import ast
 import numpy as np
 import pandas as pd
 from rich import print
+import nltk
+from nltk.stem.porter import PorterStemmer
 
 
+ps =PorterStemmer()  # to combine all same meaning words ** walk , walking, walked**
+def stem(text):
+    y=[]
+    for i in text.split():
+        y.append(ps.stem(i))
+    return " ".join(y)
 
 pd.set_option('display.max_columns', None)
 
@@ -39,7 +47,7 @@ def convert(obj):
     L= []
     for i in ast.literal_eval(obj):  #ast.literal_eval() converts a string list into a python list.
         L.append(i['name'])
-        return L
+    return L
     
 movies['genres'] = movies['genres'].apply(convert)
 movies['keywords'] = movies['keywords'].apply(convert)
@@ -48,12 +56,12 @@ movies['keywords'] = movies['keywords'].apply(convert)
 def convert_cast(obj):
     L= []; counter=0
     for i in ast.literal_eval(obj):  #ast.literal_eval() converts a string list into a python list.
-        if counter <= 3:
+        if counter <= 4:
             L.append(i['name'])
             counter+=1
         else:
             break
-        return L
+    return L
     
 def convert_crew(obj):
     L=[]
@@ -88,6 +96,26 @@ new_df['tags'] = new_df['tags'].apply(lambda x: " ".join(x)) #join the tags into
 #converting the tags to lowercase
 new_df['tags']= new_df['tags'].apply(lambda x: x.lower())
 
+new_df['tags']=  new_df['tags'].apply(stem)
 
 #text vectorization - converting text into numbers using bag of words model
 from sklearn.feature_extraction.text import CountVectorizer
+cv = CountVectorizer(stop_words='english', max_features=5000)
+vectors = cv.fit_transform(new_df['tags']).toarray()
+
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+similty=cosine_similarity(vectors)
+
+
+## will find similar movies now 
+
+def recommend(movie):
+    movie_index = new_df[new_df['title_movies'] ==movie].index[0]
+    distances =similty[movie_index]
+    movie_list =sorted(list(enumerate(distances)),reverse=True,key=lambda x:x[1])[1:6]
+    for i in movie_list:
+        print(new_df.iloc[i[0]].title_movies)
+  
+recommend('Batman')
