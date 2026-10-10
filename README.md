@@ -2,6 +2,8 @@
 HI !!   I made this movie recommender system , as currently i'm learning Ml and wanted to make some cool projcts.
 so the idea is , suppose You liked a movie , say batman and you want to see more movies like that , of the same series , or of the same actoor/director , so you can just search and get the results . 
 
+<img width="1132" height="716" alt="image" src="https://github.com/user-attachments/assets/4180f009-e061-4933-81c1-2dd82840cea5" />
+
 ## features 
 - the csv has 5000 movie data ! , so im sure your fav one is on the list
 - posters integration: fetches movies poster from Movie database( TMDB)
