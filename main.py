@@ -106,7 +106,7 @@ vectors = cv.fit_transform(new_df['tags']).toarray()
 
 from sklearn.metrics.pairwise import cosine_similarity
 
-similty=cosine_similarity(vectors)
+similty = cosine_similarity(vectors).astype(np.float32)
 
 
 ## will find similar movies now when a user will search for one
